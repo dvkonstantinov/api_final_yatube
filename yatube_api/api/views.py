@@ -43,7 +43,6 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     permission_classes = (IsAuthenticated, IsAuthorOrReadOnly)
     filter_backends = (filters.SearchFilter,)
@@ -51,12 +50,10 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        try:
-            serializer.save(user=user)
-        except IntegrityError:
-            raise ValidationError(
-                'Вы уже подписаны на этого человека')
+        serializer.save(user=user)
 
     def get_queryset(self):
         user = self.request.user
+        # Не совсем понимаю, при чем тут related_name? Мы же фильтруем по
+        # столбцу user_id и ищем все записи по текущему пользователю
         return Follow.objects.filter(user=user)

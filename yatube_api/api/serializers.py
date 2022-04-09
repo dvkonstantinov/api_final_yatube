@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField, PrimaryKeyRelatedField
 
-
 from posts.models import Comment, Post, Group, Follow, User
 
 
@@ -18,7 +17,6 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    text = serializers.CharField()
 
     class Meta:
         fields = '__all__'
@@ -43,6 +41,9 @@ class FollowSerializer(serializers.ModelSerializer):
         if user == follower_name:
             raise serializers.ValidationError('Вы не можете подписаться на '
                                               'самого себя')
+        if Follow.objects.filter(user=user, following=follower_name).exists():
+            raise serializers.ValidationError('Вы уже подписаны на этого '
+                                              'человека')
         return follower_name
 
     class Meta:
