@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView
 from rest_framework import viewsets, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
 from .serializers import (PostSerializer, CommentSerializer,
                           GroupSerializer, FollowSerializer)
-from posts.models import Post, Group, Comment, Follow, User
+from posts.models import Post, Group, Comment
 from .permissions import IsAuthorOrReadOnly
 
 
@@ -54,4 +53,3 @@ class FollowViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return user.followers.all()
-
